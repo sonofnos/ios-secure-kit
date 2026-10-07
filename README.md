@@ -22,6 +22,12 @@ via Swift Package Manager.
 - **`CertificatePinner`** — a `URLSessionDelegate` that pins the server's **SPKI (Subject
   Public Key Info) SHA-256 hash**, not the leaf certificate. See "Why SPKI, not leaf
   pinning" below.
+- **`SPKIPinningTrustEvaluator`** — Alamofire's `Session` evaluates server trust through its
+  own `SessionDelegate`/`ServerTrustManager`, not an arbitrary external `URLSessionDelegate`,
+  so this adapts the exact same `CertificatePinner.spkiSHA256Base64` hashing logic to
+  Alamofire's `ServerTrustEvaluating` protocol instead of duplicating it. Both the plain-
+  `URLSession` path and the Alamofire path pin against the identical digest, computed the
+  identical way.
 - **`AuthInterceptor`** — attaches `Authorization: Bearer <token>` to every request and,
   on a 401, refreshes once and retries. Conforms to Alamofire's `RequestInterceptor`, but
   the refresh/retry *decision logic* sits behind a plain `TokenStoring` protocol so it's
